@@ -5,7 +5,7 @@ mobage-jssdk-sample-payment
 * Mac Book Air OS 10.9.2
 * PHP 5.4.24
 * MySQL 5.6.17
-* [jwt](https://github.com/F21/jwt) ライブラリ（PHP 5.4.8 以上必要）
+* [jwt](https://github.com/firebase/php-jwt) ライブラリ（PHP 5.4.8 以上必要）
 
 ※ JSSDKではDOM-based XSSに対するセキュリティ上の対策としてContent Security Policyを導入しており、それによってinlineなJavaScriptの実行を禁止しています。Chromeのextensionの中にはこちらに抵触する処理を行うものがあるため、PCなどのChromeブラウザにて試す際には、Secret Modeで実行してください
 
@@ -72,9 +72,9 @@ Mobage Developers Japanであらかじめ登録した値を記載しましょう
 ### JWTライブラリを準備する
 公開鍵 X509 formatで以下のライブラリを利用しています。  
 
-https://github.com/F21/jwt
+https://github.com/firebase/php-jwt
 
-こちらのライブラリをダウンロードして以下のように配置しましょう。 
+こちらのライブラリの/Authentication/JWT.phpをダウンロードして以下のように配置してください。
 なお、こちらのライブラリを動作させるためには PHP 5.4.8 以上が必要です。
 
 ```
