@@ -17,11 +17,12 @@ Mobage JS SDK を利用したアイテム課金処理に必要な処理をイメ
  * 事前にアイテム登録が行われている場合
  * 事前にアイテム登録が行われていない場合
 
-以下のような、購入途中で処理が止まって「モバコイン引き落とされたけどアイテム付与されていない」といった状態にあるユーザーを救済するサンプル3つで構成されています。
+以下のような、購入途中で処理が止まって「モバコイン引き落とされたけどアイテム付与されていない」といった状態にあるユーザーを救済するサンプル4つで構成されています。
 
 * アイテム購入が失敗した時の処理
  * Server 側での非同期確認処理
  * Client 側での非同期確認処理
+ * Client 側での即時確認処理
  * バッチを用いた非同期確認処理
 
 ### 関連ドキュメント
@@ -328,6 +329,46 @@ mysql> select * from order_db;
 ```
 
 上記のように、ユーザにアイテムが付与され、Order DB が更新されていることを確認することができます。
+
+### Client 側での即時確認処理を確認する
+#### アイテム付与されていない状況の作成
+「コインは引き落とされるがアイテムは付与されない」という状況をつくります。
+
+purchase.js に記載された、Game Server にアイテム付与リクエストを送る「req.send(signedResponse);」をコメントアウトし、その状態でアイテムを購入します。
+
+なお、Server 側での非同期確認処理を既に実装済みの場合は、動作確認で競合しないように、Server 側での非同期確認処理が平行して実施されないような対応をお願いします。
+
+#### Client 側での即時確認処理の実行
+下記のページにアクセスし、「Client-Side Immediate Confirmation」へページ遷移すると、遷移先ページにてClient 側での非同期確認処理が実施されます。
+http://localhost/mobage-jssdk-sample-payment/
+
+サンプルから出力されるログにて「Client-Side Immediate Confirmation has come!!」というメッセージの表示を確認しつつ、Order DB と ユーザーの所持アイテムも確認しましょう。
+```
+$ mysql -u YOUR_USERNAME -p YOUR_PASSWORD
+
+mysql> use mobage_jssdk_sample;
+
+mysql> select * from user_items;
++---------+----------+----------+
+| user_id | item_id  | item_num |
++---------+----------+----------+
+|  151442 | item_001 |        5 |
++---------+----------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from order_db;
++----------+-------------+--------------------------------------+---------+------------+------------+
+| order_id | order_state | transaction_id                       | user_id | client_id  | created_at |
++----------+-------------+--------------------------------------+---------+------------+------------+
+|        1 | closed      | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |  XXXXXX | XXXXXXXX-X | 1403074112 |
+|        2 | closed      | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |  XXXXXX | XXXXXXXX-X | 1403169425 |
+|        3 | closed      | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |  XXXXXX | XXXXXXXX-X | 1403503238 |
++----------+-------------+--------------------------------------+---------+------------+------------+
+3 row in set (0.00 sec)
+```
+
+上記のように、ユーザにアイテムが付与され、Order DB が更新されていることを確認することができます。
+
 
 ### Batch を用いた非同期確認処理を確認する
 #### Batch での確認を行うための準備
