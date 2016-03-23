@@ -46,7 +46,9 @@
                     sendToRedirectURI(result);
                     var transactionIds = mobage.bank.getPaymentAllTransactionIds();
                     if(transactionIds.length > 0) {
-                        confirmTransaction(transactionIds);
+                        for(var i = 0; i < transactionIds.length(); i++) {
+                            confirmTransaction(transactionIds[i]);
+                        }
                     }
                 } else {
                     console.log('getConnected Status Error');
@@ -57,10 +59,10 @@
 
 
     // Request GameServer to confirm Transaction
-    function confirmTransaction(transactionIds) {
+    function confirmTransaction(transactionId) {
         var req = new XMLHttpRequest();
         var payload = {
-            'transactionIds': transactionIds
+            'transactionId': transactionId
         };
         req.open('POST', 'confirmation.php');
         req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');

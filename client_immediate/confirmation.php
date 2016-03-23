@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_params = json_decode(file_get_contents('php://input'));
 
     // extract one transacton_id from array
-    $transaction_id = $request_params->transactionIds[0];
+    $transaction_id = $request_params->transactionId;
     $access_token   = $_SESSION['access_token'];
 
     $transaction   = bankDebitGet($transaction_id, $access_token);
