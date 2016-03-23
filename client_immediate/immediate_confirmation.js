@@ -45,7 +45,9 @@
                 if (result) {
                     sendToRedirectURI(result);
                     var transactionIds = mobage.bank.getPaymentAllTransactionIds();
-                    confirmTransaction(transactionIds);
+                    if(transactionIds.length > 0) {
+                        confirmTransaction(transactionIds);
+                    }
                 } else {
                     console.log('getConnected Status Error');
                 }
