@@ -44,7 +44,7 @@
             mobage.oauth.getConnectedStatus(params, function(err, result) {
                 if (result) {
                     sendToRedirectURI(result);
-                    transactionIds = mobage.bank.getPaymentAllTransactionIds();
+                    var transactionIds = mobage.bank.getPaymentAllTransactionIds();
                     confirmTransaction(transactionIds);
                 } else {
                     console.log('getConnected Status Error');
