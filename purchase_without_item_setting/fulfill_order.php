@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die();
     }
 
-    render_json([ 'success' => true, 'user_id' => $user_id ]);
+    render_json([ 'success' => true ]);
 }
 
 function render_json($params) {
