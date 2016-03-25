@@ -28,7 +28,7 @@
     require_once('save_refresh_token.php');
 
     $unixtime = time();
-    $half_an_hour_ago = $unixtime - (30 * 60);
+    $catch_time = $unixtime - (5 * 60);
 
 
     $order_list = array();
@@ -39,7 +39,7 @@
             from order_db
             where order_state = 'authorized' and created_at < ? order by created_at;";
         $sth_for_select = $dbh->prepare($sql_for_select);
-        $sth_for_select->execute(array($half_an_hour_ago));
+        $sth_for_select->execute(array($catch_time));
 
         while ($order = $sth_for_select->fetch()) {
             $user_id        = $order['user_id'];
@@ -73,8 +73,8 @@
                         $locked_order['order_state'] . "\n", 3, ERROR_LOG_PATH);
                 $dbh->rollBack();
 
-            } elseif ($state === 'canceled' || $state === 'error') {
-                // Update order_state from authorized to canceled/error
+            } elseif ($state === 'canceled') {
+                // Update order_state from authorized to canceled
                 $sql_for_cancel = 'update order_db
                     set order_state = ?
                     where order_id = ?;';
@@ -104,6 +104,10 @@
                 $sth_for_close = $dbh->prepare($sql_for_close);
                 $sth_for_close->execute(array($state, $order_id));
                 $dbh->commit();    
+            } else {
+                error_log('The Transaction is processing state=' .
+                        $state . "\n", 3, ERROR_LOG_PATH);
+                $dbh->rollBack();
             }
         }
     } catch (PDOException $e) {
